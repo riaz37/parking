@@ -20,11 +20,13 @@ model User {
 
     name  String?
     image String?
-    
 
     Credentials  Credentials?
     AuthProvider AuthProvider?
     Admin        Admin?
+    Manager      Manager?
+    Valet        Valet?
+    Customer     Customer?
 }
 
 model Admin {
@@ -59,6 +61,53 @@ enum AuthProviderType {
     CREDENTIALS
 }
 
+model Customer {
+    uid  String @id
+    User User   @relation(fields: [uid], references: [uid])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    displayName String?
+
+    Bookings Booking[]
+    Reviews  Review[]
+}
+
+model Manager {
+    uid  String @id
+    User User   @relation(fields: [uid], references: [uid])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    displayName String?
+
+    companyId       Int?              @unique
+    Company         Company?          @relation(fields: [companyId], references: [id])
+    BookingTimeline BookingTimeline[]
+}
+
+model Valet {
+    uid  String @id
+    User User   @relation(fields: [uid], references: [uid])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    displayName String
+    image       String?
+    licenceID   String  @default("")
+
+    companyId         Int?
+    Company           Company?          @relation(fields: [companyId], references: [id])
+    BookingTimeline   BookingTimeline[]
+    PickupAssignments ValetAssignment[] @relation("PickupValet")
+    ReturnAssignments ValetAssignment[] @relation("ReturnValet")
+
+    @@unique([companyId, uid])
+}
+
 model Company {
     id        Int      @id @default(autoincrement())
     createdAt DateTime @default(now())
@@ -67,7 +116,9 @@ model Company {
     displayName String?
     description String?
 
-    Garages Garage[]
+    Garages  Garage[]
+    Managers Manager[]
+    Valets   Valet[]
 }
 
 model Garage {
@@ -137,6 +188,7 @@ model Booking {
     Slot   Slot @relation(fields: [slotId], references: [id])
 
     customerId String
+    Customer   Customer @relation(fields: [customerId], references: [uid])
 
     ValetAssignment ValetAssignment?
     BookingTimeline BookingTimeline[]
@@ -156,8 +208,9 @@ model ValetAssignment {
 
     pickupValetId String?
     returnValetId String?
-
-    Booking Booking @relation(fields: [bookingId], references: [id])
+    PickupValet   Valet?  @relation("PickupValet", fields: [pickupValetId], references: [uid])
+    ReturnValet   Valet?  @relation("ReturnValet", fields: [returnValetId], references: [uid])
+    Booking       Booking @relation(fields: [bookingId], references: [id])
 }
 
 model BookingTimeline {
@@ -168,6 +221,12 @@ model BookingTimeline {
 
     bookingId Int
     Booking   Booking @relation(fields: [bookingId], references: [id])
+
+    valetId String?
+    Valet   Valet?  @relation(fields: [valetId], references: [uid])
+
+    managerId String?
+    Manager   Manager? @relation(fields: [managerId], references: [uid])
 
     @@index([bookingId])
 }
@@ -181,6 +240,7 @@ model Review {
     comment String?
 
     customerId String
+    Customer   Customer @relation(fields: [customerId], references: [uid])
 
     garageId Int
     Garage   Garage @relation(fields: [garageId], references: [id])

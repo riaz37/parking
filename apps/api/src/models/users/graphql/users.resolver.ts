@@ -3,6 +3,8 @@ import { UsersService } from './users.service';
 import { User } from './entity/user.entity';
 import { FindManyUserArgs, FindUniqueUserArgs } from './dtos/find.args';
 import {
+  LoginInput,
+  LoginOutput,
   RegisterWithCredentialsInput,
   RegisterWithProviderInput,
 } from './dtos/create-user.input';
@@ -22,17 +24,27 @@ export class UsersResolver {
   @AllowAuthenticated()
   @Mutation(() => User)
   async registerUserWithCredentials(
-    @Args('createUserCredentialsInput') args: RegisterWithCredentialsInput,
+    @Args('registerUserCredentialsInput') args: RegisterWithCredentialsInput,
   ) {
     return this.usersService.registerWithCredentials(args);
   }
 
-  @AllowAuthenticated()
+  @Mutation(() => LoginOutput)
+  async login(@Args('loginInput') args: LoginInput) {
+    return this.usersService.login(args);
+  }
+
   @Mutation(() => User)
   async registerUserWithProvider(
-    @Args('createUserCredentialsInput') args: RegisterWithProviderInput,
+    @Args('registerUserProviderInput') args: RegisterWithProviderInput,
   ) {
     return this.usersService.registerWithProvider(args);
+  }
+
+  @AllowAuthenticated()
+  @Query(() => User)
+  whoami(@GetUser() user: GetUserType) {
+    return this.prisma.user.findUnique({ where: { uid: user.uid } });
   }
 
   @Query(() => [User], { name: 'users' })

@@ -21,13 +21,16 @@ export class UsersResolver {
     return this.usersService.create(args)
   }
 
+  
   @Query(() => [User], { name: 'users' })
   findAll(@Args() args: FindManyUserArgs) {
     return this.usersService.findAll(args)
   }
 
+  @AllowAuthenticated()
   @Query(() => User, { name: 'user' })
-  findOne(@Args() args: FindUniqueUserArgs) {
+  findOne(@Args() args: FindUniqueUserArgs, @GetUser() user: GetUserType) {
+    checkRowLevelPermission(user, args.where.uid)
     return this.usersService.findOne(args)
   }
 

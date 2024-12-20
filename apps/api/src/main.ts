@@ -6,7 +6,7 @@ import { SwaggerModule } from '@nestjs/swagger/dist';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors();
-  await app.listen(process.env.PORT ?? 3000);
+ 
 
   const config = new DocumentBuilder()
     .setTitle('ParkEasy')
@@ -25,5 +25,7 @@ You might also need to use the <a target="_blank" href="https://studio.apollogra
     .build()
     const document = SwaggerModule.createDocument(app, config)
   SwaggerModule.setup('/', app, document)
+
+  await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

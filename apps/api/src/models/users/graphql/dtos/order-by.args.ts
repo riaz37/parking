@@ -9,7 +9,7 @@ export class UserOrderByWithRelationInputStrict
       UserOrderByWithRelationInputStrict,
       Omit<
         Prisma.UserOrderByWithRelationInput,
-        'Credentials' | 'AuthProvider' | 'Admin'
+        'Credentials' | 'AuthProvider' | 'Admin' | 'image' 
       >
     >
 {
@@ -21,9 +21,6 @@ export class UserOrderByWithRelationInputStrict
   updatedAt: Prisma.SortOrder;
   @Field(() => Prisma.SortOrder, { nullable: true })
   name: Prisma.SortOrder;
-  @Field(() => Prisma.SortOrder, { nullable: true })
-  image: Prisma.SortOrder;
-  
   
 }
 

@@ -4,10 +4,10 @@
 
 type User {
   name: String
+  image: String
   uid: String!
   createdAt: DateTime!
   updatedAt: DateTime!
-  image: String!
 }
 
 """
@@ -74,7 +74,6 @@ input UserOrderByWithRelationInput {
   createdAt: SortOrder
   updatedAt: SortOrder
   name: SortOrder
-  image: SortOrder
 }
 
 enum SortOrder {
@@ -87,17 +86,31 @@ input UserWhereUniqueInput {
 }
 
 type Mutation {
-  createUser(createUserInput: CreateUserInput!): User!
+  registerUserWithCredentials(createUserCredentialsInput: RegisterWithCredentialsInput!): User!
+  registerUserWithProvider(createUserCredentialsInput: RegisterWithProviderInput!): User!
   updateUser(updateUserInput: UpdateUserInput!): User!
   removeUser(where: UserWhereUniqueInput!): User!
 }
 
-input CreateUserInput {
+input RegisterWithCredentialsInput {
+  name: String!
+  email: String!
+  password: String!
+  image: String
+}
+
+input RegisterWithProviderInput {
   name: String
+  image: String
   uid: String!
+  type: AuthProviderType!
+}
+
+enum AuthProviderType {
+  GOOGLE
+  CREDENTIALS
 }
 
 input UpdateUserInput {
-  name: String
   uid: String!
 }

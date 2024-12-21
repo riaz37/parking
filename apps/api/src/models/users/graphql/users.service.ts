@@ -12,7 +12,7 @@ import {
   RegisterWithProviderInput,
 } from './dtos/create-user.input'
 import { UpdateUserInput } from './dtos/update-user.input'
-import * as bcrypt from 'bcryptjs'
+import * as bcrypt from 'bcrypt'
 import { v4 as uuid } from 'uuid'
 import { JwtService } from '@nestjs/jwt'
 

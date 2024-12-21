@@ -3,8 +3,8 @@ import { FindManyBookingArgs, FindUniqueBookingArgs } from './dtos/find.args'
 import { PrismaService } from 'src/common/prisma/prisma.service'
 import { CreateBookingInput } from './dtos/create-booking.input'
 import { UpdateBookingInput } from './dtos/update-booking.input'
-import { generateSixDigitNumber } from 'src/common/util'
 import { SlotType } from '@prisma/client'
+import { generateSixDigitNumber } from 'src/common/utils'
 
 @Injectable()
 export class BookingsService {

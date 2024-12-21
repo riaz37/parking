@@ -1,21 +1,22 @@
-import { NextAuthOptions, getServerSession } from 'next-auth'
-import GoogleProvider from 'next-auth/providers/google'
-import CredentialsProvider from 'next-auth/providers/credentials'
+import { NextAuthOptions, getServerSession } from "next-auth";
+import { JWT } from "next-auth/jwt";
+
+import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
 import {
   AuthProviderType,
   GetAuthProviderDocument,
   LoginDocument,
   RegisterWithProviderDocument,
-} from '@libs/network/src/gql/generated'
-import { fetchGraphQL } from '@libs/network/src/fetch'
-import * as jwt from 'jsonwebtoken'
-import { JWT } from 'next-auth/jwt'
+} from "@libs/network/src/gql/generated";
+import { fetchGraphQL } from "@libs/network/src/fetch";
+import * as jwt from "jsonwebtoken";
 
-const MAX_AGE = 1 * 24 * 60 * 60
+const MAX_AGE = 1 * 24 * 60 * 60;
 
-const secureCookies = process.env.NEXTAUTH_URL?.startsWith('https://')
-const hostName = new URL(process.env.NEXTAUTH_URL || '').hostname
-const rootDomain = 'karthicktech.com'
+const secureCookies = process.env.NEXTAUTH_URL?.startsWith("https://");
+const hostName = new URL(process.env.NEXTAUTH_URL || "").hostname;
+const rootDomain = "karthicktech.com";
 
 export const authOptions: NextAuthOptions = {
   // Configure authentication providers
@@ -26,43 +27,43 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       authorization: {
         params: {
-          scope: 'openid profile',
+          scope: "openid profile",
         },
       },
     }),
     // Credentials provider configuration for email/password authentication
     CredentialsProvider({
-      name: 'Credentials',
+      name: "Credentials",
       credentials: {
-        email: { label: 'Email', type: 'email' },
-        password: { label: 'Password', type: 'password' },
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
       },
       // Authorize function to validate user credentials
       async authorize(credentials) {
         // Implement credential validation logic
         if (!credentials) {
-          throw new Error('Email and password are required')
+          throw new Error("Email and password are required");
         }
-        const { email, password } = credentials
+        const { email, password } = credentials;
 
         try {
           const { data, error } = await fetchGraphQL({
             document: LoginDocument,
             variables: { loginInput: { email, password } },
-          })
+          });
 
           if (!data?.login.token || error) {
             throw new Error(
-              'Authentication failed: Invalid credentials or user not found',
-            )
+              "Authentication failed: Invalid credentials or user not found"
+            );
           }
-          const uid = data.login.user.uid
-          const image = data.login.user.image
-          const name = data.login.user.name
+          const uid = data.login.user.uid;
+          const image = data.login.user.image;
+          const name = data.login.user.name;
 
-          return { id: uid, name, image, email }
+          return { id: uid, name, image, email };
         } catch (error) {}
-        return null
+        return null;
       },
     }),
   ],
@@ -72,7 +73,7 @@ export const authOptions: NextAuthOptions = {
 
   // Configure session settings
   session: {
-    strategy: 'jwt',
+    strategy: "jwt",
     maxAge: MAX_AGE,
   },
 
@@ -83,48 +84,48 @@ export const authOptions: NextAuthOptions = {
     async encode({ token, secret }): Promise<string> {
       // Implement custom JWT encoding logic
       if (!token) {
-        throw new Error('Token is undefined')
+        throw new Error("Token is undefined");
       }
-      const { sub, ...tokenProps } = token
+      const { sub, ...tokenProps } = token;
       // Get the current date in seconds since the epoch
-      const nowInSeconds = Math.floor(Date.now() / 1000)
+      const nowInSeconds = Math.floor(Date.now() / 1000);
       // Calculate the expiration timestamp
-      const expirationTimestamp = nowInSeconds + MAX_AGE
+      const expirationTimestamp = nowInSeconds + MAX_AGE;
       return jwt.sign(
         { uid: sub, ...tokenProps, exp: expirationTimestamp },
         secret,
         {
-          algorithm: 'HS256',
-        },
-      )
+          algorithm: "HS256",
+        }
+      );
     },
     // Custom JWT decoding function
     async decode({ token, secret }): Promise<JWT | null> {
       // Implement custom JWT decoding logic
       if (!token) {
-        throw new Error('Token is undefined')
+        throw new Error("Token is undefined");
       }
 
       try {
         const decodedToken = jwt.verify(token, secret, {
-          algorithms: ['HS256'],
-        })
-        return decodedToken as JWT
+          algorithms: ["HS256"],
+        });
+        return decodedToken as JWT;
       } catch (error) {
-        return null
+        return null;
       }
       // ...
     },
   },
   cookies: {
     sessionToken: {
-      name: `${secureCookies ? '__Secure-' : ''}next-auth.session-token`,
+      name: `${secureCookies ? "__Secure-" : ""}next-auth.session-token`,
       options: {
         httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
+        sameSite: "lax",
+        path: "/",
         secure: secureCookies,
-        domain: hostName == 'localhost' ? hostName : '.' + rootDomain, // add a . in front so that subdomains are included
+        domain: hostName == "localhost" ? hostName : "." + rootDomain, // add a . in front so that subdomains are included
       },
     },
   },
@@ -134,15 +135,15 @@ export const authOptions: NextAuthOptions = {
     // Sign-in callback
     async signIn({ user, account }) {
       // Implement sign-in logic, e.g., create user in database
-      if (account?.provider === 'google') {
-        const { id, name, image } = user
+      if (account?.provider === "google") {
+        const { id, name, image } = user;
 
         const existingUser = await fetchGraphQL({
           document: GetAuthProviderDocument,
           variables: {
             uid: id,
           },
-        })
+        });
 
         if (!existingUser.data?.getAuthProvider?.uid) {
           const newUser = await fetchGraphQL({
@@ -152,35 +153,35 @@ export const authOptions: NextAuthOptions = {
                 uid: id,
                 type: AuthProviderType.Google,
                 image,
-                name: name || '',
+                name: name || "",
               },
             },
-          })
+          });
         }
       }
 
-      return true
+      return true;
     },
     // Session callback
     async session({ token, session }) {
-      // Customize session object based on token data
+     
       if (token) {
         session.user = {
           image: token.picture,
-          uid: (token.uid as string) || '',
+          uid: (token.uid as string) || "",
           email: token.email,
           name: token.name,
-        }
+        };
       }
-      return session
+      return session;
       // ...
     },
   },
 
   // Configure custom pages
   pages: {
-    signIn: '/signIn',
+    signIn: "/signIn",
   },
-}
+};
 
-export const getAuth = () => getServerSession(authOptions)
+export const getAuth = () => getServerSession(authOptions);

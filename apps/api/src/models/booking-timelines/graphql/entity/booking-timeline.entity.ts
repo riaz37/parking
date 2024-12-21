@@ -6,10 +6,10 @@ import { RestrictProperties } from 'src/common/dtos/common.input';
 export class BookingTimeline
   implements RestrictProperties<BookingTimeline, BookingTimelineType>
 {
-  @Field(() => $Enums.BookingStatus)
-  status: $Enums.BookingStatus;
   id: number;
   timestamp: Date;
+  @Field(() => $Enums.BookingStatus)
+  status: $Enums.BookingStatus;
   bookingId: number;
   @Field({ nullable: true })
   valetId: string;

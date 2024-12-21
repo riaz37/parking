@@ -23,14 +23,14 @@ import { ReviewsModule } from './models/reviews/reviews.module';
 import { VerificationsModule } from './models/verifications/verifications.module';
 
 //TODO: move to util lib
-const MAX_AGE = "1d"
+const MAX_AGE = '1d';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: MAX_AGE },
-      global: true
+      global: true,
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
@@ -56,8 +56,7 @@ const MAX_AGE = "1d"
     BookingsModule,
     BookingTimelinesModule,
     ReviewsModule,
-    VerificationsModule
-
+    VerificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

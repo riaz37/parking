@@ -1,6 +1,11 @@
 import { Field, InputType, PartialType } from '@nestjs/graphql';
 import { Prisma } from '@prisma/client';
-import { FloatFilter, IntFilter, RestrictProperties, StringFilter } from 'src/common/dtos/common.input';
+import {
+  FloatFilter,
+  IntFilter,
+  RestrictProperties,
+  StringFilter,
+} from 'src/common/dtos/common.input';
 import { GarageRelationFilter } from 'src/models/garages/graphql/dtos/where.args';
 
 @InputType()
@@ -16,12 +21,12 @@ export class AddressWhereInputStrict
   id: IntFilter;
   createdAt: StringFilter;
   updatedAt: StringFilter;
-  address: StringFilter
-  lat: FloatFilter
-  lng: FloatFilter
-  garageId: IntFilter
-  Garage: GarageRelationFilter
-    
+  address: StringFilter;
+  lat: FloatFilter;
+  lng: FloatFilter;
+  garageId: IntFilter;
+  Garage: GarageRelationFilter;
+
   // Todo: Add the below field decorator only to the $Enums types.
   // @Field(() => $Enums.x)
 

@@ -1,28 +1,32 @@
-import { JwtService } from '@nestjs/jwt';
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { FindManyUserArgs, FindUniqueUserArgs } from './dtos/find.args';
 import { PrismaService } from 'src/common/prisma/prisma.service';
-import { UpdateUserInput } from './dtos/update-user.input';
 import {
   LoginInput,
+  LoginOutput,
   RegisterWithCredentialsInput,
   RegisterWithProviderInput,
 } from './dtos/create-user.input';
+import { UpdateUserInput } from './dtos/update-user.input';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuid } from 'uuid';
-import { BadRequestException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+
 @Injectable()
 export class UsersService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly JwtService: JwtService,
+    private readonly jwtService: JwtService,
   ) {}
-
-  registerWithProvider({ name, uid, image, type }: RegisterWithProviderInput) {
+  registerWithProvider({ image, name, uid, type }: RegisterWithProviderInput) {
     return this.prisma.user.create({
       data: {
-        name,
         uid,
+        name,
         image,
         AuthProvider: {
           create: {
@@ -34,12 +38,11 @@ export class UsersService {
   }
 
   async registerWithCredentials({
-    name,
     email,
+    name,
     password,
     image,
   }: RegisterWithCredentialsInput) {
-    // check if user already exists
     const existingUser = await this.prisma.credentials.findUnique({
       where: { email },
     });
@@ -48,8 +51,8 @@ export class UsersService {
       throw new BadRequestException('User already exists with this email.');
     }
 
-    //Hash password
-    const salt = bcrypt.genSaltSync(10);
+    // Hash the password
+    const salt = bcrypt.genSaltSync();
     const passwordHash = bcrypt.hashSync(password, salt);
 
     const uid = uuid();
@@ -77,12 +80,10 @@ export class UsersService {
     });
   }
 
-  async login({ email, password }: LoginInput) {
+  async login({ email, password }: LoginInput): Promise<LoginOutput> {
     const user = await this.prisma.user.findFirst({
       where: {
-        Credentials: {
-          email,
-        },
+        Credentials: { email },
       },
       include: {
         Credentials: true,
@@ -90,7 +91,7 @@ export class UsersService {
     });
 
     if (!user) {
-      throw new BadRequestException('User not found');
+      throw new UnauthorizedException('Invalid email or password.');
     }
 
     const isPasswordValid = bcrypt.compareSync(
@@ -99,19 +100,17 @@ export class UsersService {
     );
 
     if (!isPasswordValid) {
-      throw new BadRequestException('Invalid password');
+      throw new UnauthorizedException('Invalid email or password.');
     }
 
-    const jwtToken = this.JwtService.sign(
+    const jwtToken = this.jwtService.sign(
       { uid: user.uid },
       {
         algorithm: 'HS256',
       },
     );
 
-    return {
-      token: jwtToken,
-    };
+    return { token: jwtToken, user };
   }
 
   findAll(args: FindManyUserArgs) {

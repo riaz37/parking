@@ -13,6 +13,9 @@ export class UserOrderByWithRelationInputStrict
       >
     >
 {
+  Manager: Prisma.ManagerOrderByWithRelationInput;
+  Valet: Prisma.ValetOrderByWithRelationInput;
+  Customer: Prisma.CustomerOrderByWithRelationInput;
   @Field(() => Prisma.SortOrder, { nullable: true })
   uid: Prisma.SortOrder;
   @Field(() => Prisma.SortOrder, { nullable: true })

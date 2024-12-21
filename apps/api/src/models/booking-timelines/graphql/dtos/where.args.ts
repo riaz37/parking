@@ -1,10 +1,18 @@
-import { Field, InputType, PartialType } from '@nestjs/graphql';
-import { $Enums, Prisma } from '@prisma/client';
-import { RestrictProperties } from 'src/common/dtos/common.input';
+import { Field, InputType, PartialType } from '@nestjs/graphql'
+import { $Enums, Prisma } from '@prisma/client'
+import {
+  DateTimeFilter,
+  IntFilter,
+  RestrictProperties,
+  StringFilter,
+} from 'src/common/dtos/common.input'
+import { BookingRelationFilter } from 'src/models/bookings/graphql/dtos/where.args'
+import { ManagerRelationFilter } from 'src/models/managers/graphql/dtos/where.args'
+import { ValetRelationFilter } from 'src/models/valets/graphql/dtos/where.args'
 
 @InputType()
 export class BookingTimelineWhereUniqueInput {
-  id: number;
+  id: number
 }
 
 @InputType()
@@ -15,53 +23,20 @@ export class BookingTimelineWhereInputStrict
       Prisma.BookingTimelineWhereInput
     >
 {
-  id: number | Prisma.IntFilter<'BookingTimeline'>;
-  timestamp: string | Date | Prisma.DateTimeFilter<'BookingTimeline'>;
-  status:
-    | $Enums.BookingStatus
-    | Prisma.EnumBookingStatusFilter<'BookingTimeline'>;
-  bookingId: number | Prisma.IntFilter<'BookingTimeline'>;
-  valetId: string | Prisma.StringNullableFilter<'BookingTimeline'>;
-  managerId: string | Prisma.StringNullableFilter<'BookingTimeline'>;
-  Booking:
-    | (Prisma.Without<
-        Prisma.BookingScalarRelationFilter,
-        Prisma.BookingWhereInput
-      > &
-        Prisma.BookingWhereInput)
-    | (Prisma.Without<
-        Prisma.BookingWhereInput,
-        Prisma.BookingScalarRelationFilter
-      > &
-        Prisma.BookingScalarRelationFilter);
-  Valet:
-    | (Prisma.Without<
-        Prisma.ValetNullableScalarRelationFilter,
-        Prisma.ValetWhereInput
-      > &
-        Prisma.ValetWhereInput)
-    | (Prisma.Without<
-        Prisma.ValetWhereInput,
-        Prisma.ValetNullableScalarRelationFilter
-      > &
-        Prisma.ValetNullableScalarRelationFilter);
-  Manager:
-    | (Prisma.Without<
-        Prisma.ManagerNullableScalarRelationFilter,
-        Prisma.ManagerWhereInput
-      > &
-        Prisma.ManagerWhereInput)
-    | (Prisma.Without<
-        Prisma.ManagerWhereInput,
-        Prisma.ManagerNullableScalarRelationFilter
-      > &
-        Prisma.ManagerNullableScalarRelationFilter);
-  // Todo: Add the below field decorator only to the $Enums types.
-  // @Field(() => $Enums.x)
+  id: IntFilter
+  timestamp: DateTimeFilter
+  @Field(() => $Enums.BookingStatus)
+  status: $Enums.BookingStatus
+  bookingId: IntFilter
+  valetId: StringFilter
+  managerId: StringFilter
+  Booking: BookingRelationFilter
+  Valet: ValetRelationFilter
+  Manager: ManagerRelationFilter
 
-  AND: BookingTimelineWhereInput[];
-  OR: BookingTimelineWhereInput[];
-  NOT: BookingTimelineWhereInput[];
+  AND: BookingTimelineWhereInput[]
+  OR: BookingTimelineWhereInput[]
+  NOT: BookingTimelineWhereInput[]
 }
 
 @InputType()
@@ -71,13 +46,13 @@ export class BookingTimelineWhereInput extends PartialType(
 
 @InputType()
 export class BookingTimelineListRelationFilter {
-  every?: BookingTimelineWhereInput;
-  some?: BookingTimelineWhereInput;
-  none?: BookingTimelineWhereInput;
+  every?: BookingTimelineWhereInput
+  some?: BookingTimelineWhereInput
+  none?: BookingTimelineWhereInput
 }
 
 @InputType()
 export class BookingTimelineRelationFilter {
-  is?: BookingTimelineWhereInput;
-  isNot?: BookingTimelineWhereInput;
+  is?: BookingTimelineWhereInput
+  isNot?: BookingTimelineWhereInput
 }

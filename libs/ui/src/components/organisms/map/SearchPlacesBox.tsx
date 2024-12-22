@@ -1,8 +1,8 @@
-import { LocationInfo, ViewState } from '@autospace/util/types'
+import { LocationInfo, ViewState } from '@libs/util/types'
 import { useMap } from 'react-map-gl'
 import { Autocomplete } from '../../atoms/Autocomplete'
-import { useSearchLocation } from '@autospace/util/hooks/location'
-import { majorCitiesLocationInfo } from '@autospace/util/constants'
+import { useSearchLocation } from '@libs/util/hooks/location'
+import { majorCitiesLocationInfo } from '@libs/util/constants'
 
 export const SearchPlaceBox = ({
   onLocationChange,

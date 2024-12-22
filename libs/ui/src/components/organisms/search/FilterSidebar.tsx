@@ -1,7 +1,7 @@
 import {
   FormTypeSearchGarage,
   formDefaultValuesSearchGarages,
-} from '@autospace/forms/src/searchGarages'
+} from '@libs/forms/src/searchGarages'
 import { useState } from 'react'
 import { useFormContext, Controller } from 'react-hook-form'
 import { Button } from '../../atoms/Button'

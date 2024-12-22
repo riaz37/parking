@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import '@autospace/ui/src/app/globals.css'
+import '@libs/ui/src/app/globals.css'
 import { ApolloProvider } from '@libs/network/src/config/apollo'
 import { SessionProvider } from '@libs/ui/src/components/molecules/SessionProvider'
 import { Header } from '@libs/ui/src/components/organisms/Header'

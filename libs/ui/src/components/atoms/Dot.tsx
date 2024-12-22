@@ -1,4 +1,4 @@
-import { BaseComponent } from '@autospace/util/types'
+import { BaseComponent } from '@libs/util/types'
 
 export const PulsingDot = ({ children }: BaseComponent) => {
   if (children)

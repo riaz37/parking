@@ -1,71 +1,71 @@
-'use client'
-import { FormTypeBookSlot } from '@autospace/forms/src/bookSlot'
-import { loadStripe } from '@stripe/stripe-js'
+"use client";
+import { FormTypeBookSlot } from "@libs/forms/src/bookSlot";
+import { loadStripe } from "@stripe/stripe-js";
 
 import {
   CreateBookingInput,
   SearchGaragesQuery,
-} from '@autospace/network/src/gql/generated'
-import { useFormContext, useWatch, Controller } from 'react-hook-form'
-import { Form } from '../atoms/Form'
-import { Badge } from '../atoms/Badge'
-import { AutoImageChanger } from './AutoImageChanger'
-import { DateRangeBookingInfo } from '../molecules/DateRangeBookingInfo'
-import { HtmlLabel } from '../atoms/HtmlLabel'
-import { Radio, RadioGroup } from '@headlessui/react'
-import { IconTypes } from '../molecules/IconTypes'
-import { FormError } from '../atoms/FormError'
-import { HtmlInput } from '../atoms/HtmlInput'
-import { toLocalISOString } from '@autospace/util/date'
-import { useTotalPrice } from '@autospace/util/hooks/price'
-import { CostTitleValue } from '../molecules/CostTitleValue'
-import { Button } from '../atoms/Button'
-import { useState } from 'react'
-import { useSession } from 'next-auth/react'
-import { TotalPrice } from '@autospace/util/types'
-import { ManageValets } from './ManageValets'
-import { toast } from '../molecules/Toast'
+} from "@libs/network/src/gql/generated";
+import { useFormContext, useWatch, Controller } from "react-hook-form";
+import { Form } from "../atoms/Form";
+import { Badge } from "../atoms/Badge";
+import { AutoImageChanger } from "./AutoImageChanger";
+import { DateRangeBookingInfo } from "../molecules/DateRangeBookingInfo";
+import { HtmlLabel } from "../atoms/HtmlLabel";
+import { Radio, RadioGroup } from "@headlessui/react";
+import { IconTypes } from "../molecules/IconTypes";
+import { FormError } from "../atoms/FormError";
+import { HtmlInput } from "../atoms/HtmlInput";
+import { toLocalISOString } from "@libs/util/date";
+import { useTotalPrice } from "@libs/util/hooks/price";
+import { CostTitleValue } from "../molecules/CostTitleValue";
+import { Button } from "../atoms/Button";
+import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { TotalPrice } from "@libs/util/types";
+import { ManageValets } from "./ManageValets";
+import { toast } from "../molecules/Toast";
 
 export const BookSlotPopup = ({
   garage,
 }: {
-  garage: SearchGaragesQuery['searchGarages'][0]
+  garage: SearchGaragesQuery["searchGarages"][0];
 }) => {
-  const session = useSession()
-  const uid = session.data?.user?.uid
+  const session = useSession();
+  const uid = (session.data?.user as { uid: string }).uid;
   const {
     control,
     register,
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useFormContext<FormTypeBookSlot>()
+  } = useFormContext<FormTypeBookSlot>();
 
   const { startTime, endTime, phoneNumber, type, valet, vehicleNumber } =
-    useWatch<FormTypeBookSlot>()
+    useWatch<FormTypeBookSlot>();
 
   const pricePerHour = garage.availableSlots.find(
-    (slot) => slot.type === type,
-  )?.pricePerHour
+    (slot) => slot.type === type
+  )?.pricePerHour;
 
   const totalPriceObj = useTotalPrice({
     pricePerHour,
-  })
+  });
 
   const totalPrice =
     totalPriceObj.parkingCharge +
     totalPriceObj.valetChargeDropoff +
-    totalPriceObj.valetChargePickup
+    totalPriceObj.valetChargePickup;
 
-  const [booking, setBooking] = useState(false)
+  const [booking, setBooking] = useState(false);
 
   return (
     <div className="flex gap-2 text-left border-t-2 border-white bg-white/50 backdrop-blur-sm">
       <Form
         onSubmit={handleSubmit(async (data) => {
           if (!uid) {
-            alert('You are not logged in.')
-            return
+            alert("You are not logged in.");
+            return;
           }
           const bookingData: CreateBookingInput = {
             phoneNumber: data.phoneNumber,
@@ -87,20 +87,20 @@ export const BookSlotPopup = ({
                   },
                 }
               : null),
-          }
+          };
 
           try {
-            setBooking(true)
+            setBooking(true);
             // Create booking session
             const res = await createBookingSession(
               uid!,
               totalPriceObj,
-              bookingData,
-            )
+              bookingData
+            );
           } catch (error) {
-            toast('An error occurred while creating the booking session.')
+            toast("An error occurred while creating the booking session.");
           } finally {
-            setBooking(false)
+            setBooking(false);
           }
         })}
       >
@@ -135,10 +135,10 @@ export const BookSlotPopup = ({
               render={({ field: { onChange, value } }) => {
                 return (
                   <RadioGroup
-                    value={value || ''}
+                    value={value || ""}
                     onChange={onChange}
                     className="flex w-full gap-2"
-                    defaultValue={''}
+                    defaultValue={""}
                   >
                     {garage.availableSlots.map((slot) => (
                       <div
@@ -150,8 +150,8 @@ export const BookSlotPopup = ({
                             <div
                               className={`cursor-default border-2 p-2 ${
                                 checked
-                                  ? 'border-primary-500 shadow-md'
-                                  : 'border-gray-200'
+                                  ? "border-primary-500 shadow-md"
+                                  : "border-gray-200"
                               }`}
                             >
                               <div className="flex items-center gap-2">
@@ -173,7 +173,7 @@ export const BookSlotPopup = ({
                       </div>
                     ))}
                   </RadioGroup>
-                )
+                );
               }}
             />
           </HtmlLabel>
@@ -184,22 +184,22 @@ export const BookSlotPopup = ({
           <HtmlInput
             type="datetime-local"
             min={toLocalISOString(new Date()).slice(0, 16)}
-            {...register('startTime')}
+            {...register("startTime")}
           />
         </HtmlLabel>
         <HtmlLabel title="End time" error={errors.endTime?.message}>
           <HtmlInput
             min={toLocalISOString(new Date()).slice(0, 16)}
             type="datetime-local"
-            {...register('endTime')}
+            {...register("endTime")}
           />
         </HtmlLabel>
 
         <HtmlLabel title="Vehicle number" error={errors.vehicleNumber?.message}>
-          <HtmlInput placeholder="KA01AB1234" {...register('vehicleNumber')} />
+          <HtmlInput placeholder="KA01AB1234" {...register("vehicleNumber")} />
         </HtmlLabel>
         <HtmlLabel title="Phone number" error={errors.phoneNumber?.message}>
-          <HtmlInput placeholder="+910000000000" {...register('phoneNumber')} />
+          <HtmlInput placeholder="+910000000000" {...register("phoneNumber")} />
         </HtmlLabel>
         <ManageValets garage={garage} />
 
@@ -227,38 +227,38 @@ export const BookSlotPopup = ({
         </Button>
       </Form>
     </div>
-  )
-}
+  );
+};
 
 export const createBookingSession = async (
   uid: string,
   totalPriceObj: TotalPrice,
-  bookingData: CreateBookingInput,
+  bookingData: CreateBookingInput
 ) => {
   try {
-    const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/stripe', {
-      method: 'POST',
+    const response = await fetch(process.env.NEXT_PUBLIC_API_URL + "/stripe", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         totalPriceObj,
         uid,
         bookingData,
       }),
-    })
-    const checkoutSession = await response.json()
+    });
+    const checkoutSession = await response.json();
 
-    const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+    const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 
-    const stripe = await loadStripe(publishableKey || '')
+    const stripe = await loadStripe(publishableKey || "");
     const result = await stripe?.redirectToCheckout({
       sessionId: checkoutSession.sessionId,
-    })
+    });
 
-    return result
+    return result;
   } catch (error) {
-    console.error('Error creating booking session:', error)
-    throw error
+    console.error("Error creating booking session:", error);
+    throw error;
   }
-}
+};

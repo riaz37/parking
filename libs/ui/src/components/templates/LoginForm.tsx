@@ -1,5 +1,5 @@
 'use client'
-import { useFormLogin } from '@autospace/forms/src/login'
+import { useFormLogin } from '@libs/forms/src/login'
 import { Form } from '../atoms/Form'
 import { HtmlLabel } from '../atoms/HtmlLabel'
 import { HtmlInput } from '../atoms/HtmlInput'

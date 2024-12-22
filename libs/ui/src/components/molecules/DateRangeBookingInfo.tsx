@@ -1,4 +1,4 @@
-import { IconArrowRightCircle } from '@tabler/icons-react'
+import {IconArrowRightCircle} from '@tabler/icons-react'
 import { useEffect, useState } from 'react'
 
 import {
@@ -6,7 +6,7 @@ import {
   formatDate,
   formatTime,
   getTimeUnits,
-} from '@autospace/util/date'
+} from '@libs/util/date'
 
 export interface IDateRangeBookingInfoProps {
   startTime?: string

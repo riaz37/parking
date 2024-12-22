@@ -1,5 +1,5 @@
-import { useDebounce } from '@autospace/util/hooks/async'
-import { LatLng, LngLatTuple } from '@autospace/util/types'
+import { useDebounce } from '@libs/util/hooks/async'
+import { LatLng, LngLatTuple } from '@libs/util/types'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Source, Layer } from 'react-map-gl'
 

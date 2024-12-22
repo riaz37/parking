@@ -1,4 +1,4 @@
-import { Role } from '@autospace/util/types'
+import { Role } from '@libs/util/types'
 import { BrandIcon } from './BrandIcon'
 
 export interface IBrandProps {

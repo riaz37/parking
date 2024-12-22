@@ -5,7 +5,8 @@
   "license": "MIT",
   "dependencies": {
     "date-fns": "^3.6.0",
-    "pluralize": "^8.0.0"
+    "pluralize": "^8.0.0",
+    "react-hook-form": "^7.54.2"
   },
   "devDependencies": {
     "@types/pluralize": "^0.0.33"

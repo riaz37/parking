@@ -1,5 +1,5 @@
 'use client'
-import { BaseComponent, MenuItem, Role } from '@autospace/util/types'
+import { BaseComponent, MenuItem, Role } from '@libs/util/types'
 import { Brand } from '../atoms/Brand'
 import { Container } from '../atoms/Container'
 import { useSession } from 'next-auth/react'
@@ -8,7 +8,7 @@ import { Sidebar } from './Sidebar'
 import { UserInfo } from '../molecules/UserInfo'
 import { LogoutButton } from '../molecules/LogoutButton'
 import { Button } from '../atoms/Button'
-import { useDialogState } from '@autospace/util/hooks/dialog'
+import { useDialogState } from '@libs/util/hooks/dialog'
 import { NavSidebar } from './NavSidebar'
 import { Menus } from './Menus'
 
@@ -19,7 +19,7 @@ export type IHeaderProps = {
 
 export const Header = ({ type, menuItems }: IHeaderProps) => {
   const session = useSession()
-  const uid = session?.data?.user?.uid
+  const uid = session?.data?.user?.uid 
   let [open, setOpen] = useDialogState(false)
 
   return (

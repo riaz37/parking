@@ -1,0 +1,35 @@
+mutation RegisterWithCredentials($registerWithCredentialsInput: RegisterWithCredentialsInput!) {
+  registerWithCredentials(registerWithCredentialsInput: $registerWithCredentialsInput) {
+    createdAt
+    updatedAt
+    uid
+    name
+    image
+  }
+}
+
+query Company($where: CompanyWhereUniqueInput!) {
+  company(where: $where) {
+    createdAt
+    updatedAt
+    description
+    garages {
+      id
+    }
+    id
+    displayName
+    managers {
+      uid
+    }
+  }
+}
+
+query Users($where: UserWhereInput, $orderBy: [UserOrderByWithRelationInput!], $cursor: UserWhereUniqueInput, $take: Int, $skip: Int) {
+  users(where: $where, orderBy: $orderBy, cursor: $cursor, take: $take, skip: $skip) {
+    image
+    name
+    uid
+    createdAt
+    updatedAt
+  }
+}

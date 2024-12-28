@@ -1,5 +1,9 @@
-mutation RegisterWithCredentials($registerWithCredentialsInput: RegisterWithCredentialsInput!) {
-  registerWithCredentials(registerWithCredentialsInput: $registerWithCredentialsInput) {
+mutation RegisterWithCredentials(
+  $registerWithCredentialsInput: RegisterWithCredentialsInput!
+) {
+  registerWithCredentials(
+    registerWithCredentialsInput: $registerWithCredentialsInput
+  ) {
     createdAt
     updatedAt
     uid
@@ -24,8 +28,47 @@ query Company($where: CompanyWhereUniqueInput!) {
   }
 }
 
-query Users($where: UserWhereInput, $orderBy: [UserOrderByWithRelationInput!], $cursor: UserWhereUniqueInput, $take: Int, $skip: Int) {
-  users(where: $where, orderBy: $orderBy, cursor: $cursor, take: $take, skip: $skip) {
+query Users(
+  $where: UserWhereInput
+  $orderBy: [UserOrderByWithRelationInput!]
+  $cursor: UserWhereUniqueInput
+  $take: Int
+  $skip: Int
+) {
+  users(
+    where: $where
+    orderBy: $orderBy
+    cursor: $cursor
+    take: $take
+    skip: $skip
+  ) {
+    image
+    name
+    uid
+    createdAt
+    updatedAt
+  }
+}
+mutation Login($loginInput: LoginInput!) {
+  login(loginInput: $loginInput) {
+    token
+    user {
+      uid
+      name
+      image
+    }
+  }
+}
+
+query GetAuthProvider($uid: String!) {
+  getAuthProvider(uid: $uid) {
+    type
+    uid
+  }
+}
+
+mutation RegisterWithProvider($registerWithProviderInput: RegisterWithProviderInput!) {
+  registerWithProvider(registerWithProviderInput: $registerWithProviderInput) {
     image
     name
     uid

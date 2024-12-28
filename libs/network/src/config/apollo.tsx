@@ -1,12 +1,11 @@
 "use client";
 import {
   ApolloClient,
-  ApolloLink,
   InMemoryCache,
   ApolloProvider as Provider,
   HttpLink,
 } from "@apollo/client";
-import {ReactNode} from "react";
+import { ReactNode } from "react";
 
 export interface IApolloProviderProps {
   children: ReactNode;

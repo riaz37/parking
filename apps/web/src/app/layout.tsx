@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import "./globals.css";
+import "@libs/ui/src/app/globals.css";
 import { ApolloProvider } from "@libs/network/src/config/apollo";
+import { SessionProvider } from "@libs/ui/src/components/molecules/SessionProvider";
+import { Header } from "@libs/ui/src/components/organisms/Header";
+import { MenuItem } from "@libs/util/types";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -13,6 +16,11 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
   weight: "100 900",
 });
+
+const MENUITEMS: MenuItem[] = [
+  { label: "Search", href: "/search" },
+  { label: "Bookings", href: "/bookings" },
+];
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -26,13 +34,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <ApolloProvider>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
-          {children}
-        </body>
-      </ApolloProvider>
+      <SessionProvider>
+        <ApolloProvider>
+          <body
+            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          >
+            <Header menuItems={MENUITEMS} />
+            {children}
+          </body>
+        </ApolloProvider>
+      </SessionProvider>
     </html>
   );
 }
